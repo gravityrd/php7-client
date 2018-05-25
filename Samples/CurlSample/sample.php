@@ -12,12 +12,8 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 
-const YUSP_SERVICE_USERNAME = "yourusername";
-const YUSP_SERVICE_PASSWORD = "secret";
-// Format hint: 'https://<CUSTOMERID>-<SERVERLOCATION>.gravityrd-services.com/grrec-<CUSTOMERID>-war/WebshopServlet';
-const YUSP_SERVICE_URL = "https://customerid-bud.gravityrd-services.com/grrec-customerid-war/WebshopServlet";
-
-$config = new \Gravityrd\GravityClient\ClientConfiguration(YUSP_SERVICE_USERNAME, YUSP_SERVICE_PASSWORD, YUSP_SERVICE_URL);
+$localConfig = get_config();
+$config = new ClientConfiguration(...$localConfig);
 
 /*
 * Simples usage is to depend on the Service Discovery, that should work ... in most cases

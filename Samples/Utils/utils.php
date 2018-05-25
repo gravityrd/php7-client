@@ -29,6 +29,24 @@ function make_client(ClientConfiguration $config, HttpClient $clientImpl = null,
     }
 }
 
+function get_config(): array
+{
+    $serviceName = getenv('YUSP_SERVICE_USERNAME') !== false
+        ? getenv('YUSP_SERVICE_USERNAME')
+        : "yourusername";
+
+    $servicePassword = getenv('YUSP_SERVICE_PASSWORD') !== false
+        ? getenv('YUSP_SERVICE_PASSWORD')
+        : "secret";
+
+    // Format hint: 'https://<CUSTOMERID>-<SERVERLOCATION>.gravityrd-services.com/grrec-<CUSTOMERID>-war/WebshopServlet';
+    $serviceUrl = getenv('YUSP_SERVICE_URL') !== false
+        ? getenv('YUSP_SERVICE_URL')
+        : "https://customerid-bud.gravityrd-services.com/grrec-customerid-war/WebshopServlet";
+
+    return [$serviceName, $servicePassword, $serviceUrl];
+}
+
 
 /**
  * @param GravityClient $client
