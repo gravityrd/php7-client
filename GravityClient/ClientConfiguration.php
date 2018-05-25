@@ -177,7 +177,7 @@ class ClientConfiguration
     public function validateOrFail()
     {
         $errors = $this->validate();
-        if (!\count($errors) > 0) {
+        if (\count($errors) > 0) {
             throw new ClientConfigurationValidationException($errors);
         }
     }

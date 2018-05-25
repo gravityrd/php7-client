@@ -8,6 +8,7 @@ declare(strict_types=1);
 require_once "vendor/autoload.php";
 require_once "../Utils/utils.php";
 
+use Gravityrd\GravityClient\ClientConfiguration;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
