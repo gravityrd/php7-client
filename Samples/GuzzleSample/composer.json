@@ -1,0 +1,33 @@
+{
+  "name": "gravityrd/php7-client-guzzle-sample",
+  "type": "application",
+  "description": "PHP client usage sample to access Yusp Service from Gravity R&D",
+  "keywords": [
+    "client",
+    "gravityrd",
+    "php-client",
+    "yusp"
+  ],
+  "license": "Apache-2.0",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Gravity R&D",
+      "email": "daniel.fraknoy@yusp.com",
+      "homepage": "http://www.yusp.com/",
+      "role": "Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/gravityrd/php7-client"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.4",
+    "guzzlehttp/psr7": "^1.4",
+    "gravityrd/php7-client": "master",
+    "php-http/guzzle6-adapter": "^1.2@dev"
+  }
+}
