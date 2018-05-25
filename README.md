@@ -1,4 +1,4 @@
-YuspClient
+GravityClient
 ==========
 
 This is the PHP 7 + version of the former GravityClient.
