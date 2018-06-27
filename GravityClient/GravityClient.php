@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Gravityrd\GravityClient;
 
 use Gravityrd\GravityClient\Exceptions\ClientConfigurationValidationException;
-use Gravityrd\GravityClient\Exceptions\GravityRequestException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Http\Client\Common\Plugin\HeaderAppendPlugin;
@@ -405,13 +404,8 @@ class GravityClient
         $uri = $uri->withUserInfo($this->config->getUser(), $this->config->getPassword());
 
         $request = $this->messageFactory->createRequest($httpMethod, $uri, [], $requestBody);
-        $response = $client->sendRequest($request);
 
-        if ($response->getStatusCode() != 200) {
-            throw new GravityRequestException("Non-200 HTTP response code: ".$response->getStatusCode());
-        }
-
-        return $response;
+        return $client->sendRequest($request);
     }
 
     protected function guessOriginalRequestURI(): string
