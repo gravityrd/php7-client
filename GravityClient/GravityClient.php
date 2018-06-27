@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Gravityrd\GravityClient;
 
 use Gravityrd\GravityClient\Exceptions\ClientConfigurationValidationException;
+use Gravityrd\GravityClient\Exceptions\GravityRequestException;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Http\Client\Common\Plugin\HeaderAppendPlugin;
 use Http\Client\Common\Plugin\RetryPlugin;
 use Http\Client\Common\PluginClient;
@@ -279,8 +281,8 @@ class GravityClient
      * @throws \Http\Client\Exception
      */
     public function getItemRecommendation(
-        string $userId,
-        string $cookieId,
+        $userId,
+        $cookieId,
         RecommendationContext $context = null
     ): Response {
         return $this->sendRequest(
@@ -310,7 +312,7 @@ class GravityClient
      * with other information about the recommendation.
      * @throws \Http\Client\Exception
      */
-    public function getItemRecommendationBulk(string $userId, string $cookieId, array $context): Response
+    public function getItemRecommendationBulk($userId, $cookieId, array $context): Response
     {
         foreach ($context as $element) {
             $element->cookieId = $cookieId;
@@ -399,8 +401,17 @@ class GravityClient
             ? json_encode($requestBody)
             : null;
 
-        $request = $this->messageFactory->createRequest($httpMethod, $requestUrl, [], $requestBody);
-        return $client->sendRequest($request);
+        $uri = new Uri($requestUrl);
+        $uri = $uri->withUserInfo($this->config->getUser(), $this->config->getPassword());
+
+        $request = $this->messageFactory->createRequest($httpMethod, $uri, [], $requestBody);
+        $response = $client->sendRequest($request);
+
+        if ($response->getStatusCode() != 200) {
+            throw new GravityRequestException("Non-200 HTTP response code: ".$response->getStatusCode());
+        }
+
+        return $response;
     }
 
     protected function guessOriginalRequestURI(): string
