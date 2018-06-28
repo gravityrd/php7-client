@@ -5,6 +5,7 @@ namespace Gravityrd\GravityClient;
 
 use Gravityrd\GravityClient\Exceptions\ClientConfigurationValidationException;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Http\Client\Common\Plugin\HeaderAppendPlugin;
 use Http\Client\Common\Plugin\RetryPlugin;
 use Http\Client\Common\PluginClient;
@@ -310,7 +311,7 @@ class GravityClient
      * with other information about the recommendation.
      * @throws \Http\Client\Exception
      */
-    public function getItemRecommendationBulk(string $userId, string $cookieId, array $context): Response
+    public function getItemRecommendationBulk($userId, $cookieId, array $context): Response
     {
         foreach ($context as $element) {
             $element->cookieId = $cookieId;
@@ -399,7 +400,11 @@ class GravityClient
             ? json_encode($requestBody)
             : null;
 
-        $request = $this->messageFactory->createRequest($httpMethod, $requestUrl, [], $requestBody);
+        $uri = new Uri($requestUrl);
+        $uri = $uri->withUserInfo($this->config->getUser(), $this->config->getPassword());
+
+        $request = $this->messageFactory->createRequest($httpMethod, $uri, [], $requestBody);
+
         return $client->sendRequest($request);
     }
 
