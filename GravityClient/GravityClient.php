@@ -280,8 +280,8 @@ class GravityClient
      * @throws \Http\Client\Exception
      */
     public function getItemRecommendation(
-        $userId,
-        $cookieId,
+        string $userId,
+        string $cookieId,
         RecommendationContext $context = null
     ): Response {
         return $this->sendRequest(
