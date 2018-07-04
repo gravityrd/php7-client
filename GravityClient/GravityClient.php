@@ -284,13 +284,20 @@ class GravityClient
         string $cookieId,
         RecommendationContext $context = null
     ): Response {
+
+        $userInfo = [];
+        if (!empty($userId)) {
+            $userInfo['userId'] = $userId;
+        }
+
+        if (!empty($cookieId)) {
+            $userInfo['cookieId'] = $cookieId;
+        }
+
         return $this->sendRequest(
             'getItemRecommendation',
             "POST",
-            [
-                'userId' => $userId,
-                'cookieId' => $cookieId,
-            ],
+            $userInfo,
             $context
         );
     }
@@ -311,19 +318,32 @@ class GravityClient
      * with other information about the recommendation.
      * @throws \Http\Client\Exception
      */
-    public function getItemRecommendationBulk($userId, $cookieId, array $context): Response
+    public function getItemRecommendationBulk(string $userId, string $cookieId, array $context): Response
     {
         foreach ($context as $element) {
-            $element->cookieId = $cookieId;
-            $element->userId = $userId;
+            if (!empty($cookieId)) {
+                $element->cookieId = $cookieId;
+            }
+
+            if (!empty($userId)){
+                $element->userId = $userId;
+            }
         }
+
+        $userInfo = [];
+        if (!empty($userId)) {
+            $userInfo['userId'] = $userId;
+        }
+
+        if (!empty($cookieId)) {
+            $userInfo['cookieId'] = $cookieId;
+        }
+
+
         return $this->sendRequest(
             'getItemRecommendationBulk',
             "POST",
-            array(
-                'userId' => $userId,
-                'cookieId' => $cookieId,
-            ),
+            $userInfo,
             $context
         );
     }
