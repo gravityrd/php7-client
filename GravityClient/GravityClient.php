@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace Gravityrd\GravityClient;
 
 use Gravityrd\GravityClient\Exceptions\ClientConfigurationValidationException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Uri;
+use Http\Client\Common\Plugin\AuthenticationPlugin;
+use Http\Discovery\UriFactoryDiscovery;
+use Http\Message\Authentication\BasicAuth;
+use Http\Message\UriFactory;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\UriInterface as Uri;
 use Http\Client\Common\Plugin\HeaderAppendPlugin;
 use Http\Client\Common\Plugin\RetryPlugin;
 use Http\Client\Common\PluginClient;
@@ -35,6 +39,11 @@ class GravityClient
     private $messageFactory;
 
     /**
+     * @var UriFactory
+     */
+    private $uriFactory;
+
+    /**
      * @var ClientConfiguration
      */
     protected $config;
@@ -51,13 +60,15 @@ class GravityClient
     public function __construct(
         ClientConfiguration $config,
         HttpClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        MessageFactory $messageFactory = null,
+        UriFactory $uriFactory = null
     ) {
         $config->validateOrFail();
 
         try {
             $this->client = $httpClient ?? HttpClientDiscovery::find();
             $this->messageFactory = $messageFactory ?? MessageFactoryDiscovery::find();
+            $this->uriFactory = $uriFactory ?? UriFactoryDiscovery::find();
             $this->config = $config;
 
         } catch (\Exception $ex) {
@@ -414,14 +425,15 @@ class GravityClient
             $plugins[] = new RetryPlugin(["retries" => $this->config->getRetry()]);
         }
 
+        $authentication = new BasicAuth($this->config->getUser(), $this->config->getPassword());
+        $plugins[] = new AuthenticationPlugin($authentication);
         $client = new PluginClient($this->client, $plugins);
 
         $requestBody = $requestBody !== null
             ? json_encode($requestBody)
             : null;
 
-        $uri = new Uri($requestUrl);
-        $uri = $uri->withUserInfo($this->config->getUser(), $this->config->getPassword());
+        $uri = $this->uriFactory->createUri($requestUrl);
 
         $request = $this->messageFactory->createRequest($httpMethod, $uri, [], $requestBody);
 
